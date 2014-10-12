@@ -14,7 +14,7 @@ import base64
 import hmac
 import hashlib
 
-from six import text_type, b
+from six import text_type, b, PY3
 
 try:
     from Crypto.Cipher import AES
@@ -45,6 +45,8 @@ class CryptoURL(object):
         cypher = AES.new(self.computed_key)
         encrypted = base64.urlsafe_b64encode(cypher.encrypt(pad(url)))
 
+        if PY3:
+            encrypted = encrypted.decode('ascii')
         return "/%s/%s" % (encrypted, options['image_url'])
 
     def generate_new(self, options):
